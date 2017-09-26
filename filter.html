@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas" width="600" height="300"></canvas><br><br>
+  <img src="0_1be6c5_e2a1fac7_L-300x190.jpg" width="600" height="300"/>
+  <script>
+    var canvas = document.getElementById('canvas');
+    var c = canvas.getContext('2d');
+    var img = new Image();
+    img.onload = function(){
+        c.drawImage(img,0,0,canvas.width, canvas.height);
+        for(var i = 0; i+2 <= canvas.height; i++) {
+          for(var j = 0; j+2 <= canvas.width; j++) {
+            var pixSet = c.getImageData(j,i,j+2,i+2);
+            var res = multWithMatr(pixSet);
+            pixSet.data[16] = res[0];
+            pixSet.data[17] = res[1];
+            pixSet.data[18] = res[2];
+            c.putImageData(pixSet,j,i);
+          }
+        }
+    }
+
+  function multWithMatr(str) {
+  var conMatr = [-0.5, -0.5, -0.5, -0.5, 5, -0.5, -0.5, -0.5, -0.5];
+  var result = [];
+  var red = 0, green = 0, blue = 0;
+  red = str.data[0]*conMatr[0] + str.data[4]*conMatr[1] + str.data[8]*conMatr[2] + str.data[12]*conMatr[3] + str.data[16]*conMatr[4] + str.data[20]*conMatr[5] + str.data[24]*conMatr[6] + str.data[28]*conMatr[7] + str.data[32]*conMatr[8];
+  result.push(red);
+  green = str.data[1]*conMatr[0] + str.data[5]*conMatr[1] + str.data[9]*conMatr[2] + str.data[13]*conMatr[3] + str.data[17]*conMatr[4] + str.data[21]*conMatr[5] + str.data[25]*conMatr[6] + str.data[29]*conMatr[7] + str.data[33]*conMatr[8];
+  result.push(green);
+  blue = str.data[2]*conMatr[0] + str.data[6]*conMatr[1] + str.data[10]*conMatr[2] + str.data[14]*conMatr[3] + str.data[18]*conMatr[4] + str.data[22]*conMatr[5] + str.data[26]*conMatr[6] + str.data[30]*conMatr[7] + str.data[34]*conMatr[8];
+  result.push(blue);
+  return result;
+}
+
+    img.src="0_1be6c5_e2a1fac7_L-300x190.jpg";
+  </script>
+</body>
+</html>

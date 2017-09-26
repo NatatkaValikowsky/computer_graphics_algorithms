@@ -1,0 +1,199 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+         <style>
+            body {
+                background: white;
+            }
+
+            .Toolbar {
+                float: left;
+                font-family: 'Trebuchet MS'; 
+                font-size: 14px;
+                font-variant: small-caps;
+                text-align: center;
+                background: #F2F7FE;
+                padding: 10px 15px 3px 10px;
+                margin-bottom: 1px;
+                margin-right: 1px;
+                border: 1px solid #7B899B;
+                }
+
+            .Toolbar button {
+                padding: 6px;
+                margin: 7px 2px;
+                font-variant: normal;
+                font-size: 12px;
+                }
+
+
+            canvas {
+                border: 1px solid #7B899B;
+                }
+
+            img {
+                padding: 2px;
+                border: 2px solid #F2F7FE;
+            }
+
+            img:hover {
+                border: 2px groove #E4F0FE;
+                background: white;
+            }
+
+
+             img.Selected {
+                border: 2px groove #E4F0FE;
+            }
+             
+             h1{
+                 text-align: center;
+             }
+        </style>
+    </head>
+    <body>
+        <h1>АЛГОРИТМ РИСОВАНИЯ ЛИНИИ DDA</h1>
+         <div class="Toolbar">
+        - Цвет -<br>
+        <img id="redPen" src="http://professorweb.ru/downloads/pen_red.gif" alt="Красная кисть" onclick="changeColor('rgb(212,21,29)', this)">
+        <img id="greenPen" src="http://professorweb.ru/downloads/pen_green.gif" alt="Зеленая кисть" onclick="changeColor('rgb(131,190,61)', this)"> 
+        <img id="bluePen" src="http://professorweb.ru/downloads/pen_blue.gif" alt="Синяя кисть" onclick="changeColor('rgb(0,86,166)', this)"><br>
+        <input type="button" onclick="clearCanvas()" value="Очистить поле"/>
+        </div>
+        <div class="CanvasContainer">
+        <canvas onclick="getCoords(event)" id="drawingCanvas" width="1000" height="500"></canvas>
+        </div>
+        
+        <script>
+            var canvas;
+            var context;
+
+            window.onload = function() {
+            canvas = document.getElementById("drawingCanvas");
+            context = canvas.getContext("2d");
+                context.strokeStyle="black"
+            }
+            
+            var previousColorElement;
+
+            function changeColor(color, imgElement)
+            {
+                // 	Меняем текущий цвет рисования
+	           context.strokeStyle = color;
+                context.fillStyle=color;
+	
+	           // Меняем стиль элемента <img>, по которому щелкнули
+	           imgElement.className = "Selected";
+	
+	           // Возвращаем ранее выбранный элемент <img> в нормальное состояние
+	           if (previousColorElement != null)
+	           previousColorElement.className = "";
+	   
+	           previousColorElement = imgElement;
+            }
+            
+            var coords = [];
+            
+           function getCoords(e)
+        {
+            //alert(e.clientX + " на " + e.clientY);
+
+            drawCircle(e.clientX-canvas.offsetLeft, e.clientY-canvas.offsetTop, 3);
+                
+            coords.push(e.clientX-canvas.offsetLeft, e.clientY-canvas.offsetTop);
+
+            if (coords.length === 4) {
+                x1 = coords[0]; y1 = coords[2];
+                x2 = coords[1]; y2 = coords[3];
+
+                //var perpX = (x1 + y1)/2;
+                //var perpY = (x2 + y2)/2;
+
+                //drawCircle(perpX, perpY, 3);
+
+                //drawLine(perpX, perpY, perpX+200, perpY+200);
+                drawLine(coords[0], coords[1], coords[2], coords[3]);
+                coords = [];
+
+            }
+        }
+
+
+   /* function drawLine(x_first, y_first, x_second, y_second) 
+    {
+        context.beginPath();   
+        context.moveTo( x_first, y_first );
+        context.lineTo( x_second, y_second );
+        //context.strokeStyle=color;
+        context.lineWidth = 2; 
+        context.stroke();
+    } */
+            
+    function drawLine(x_first, y_first, x_second, y_second) 
+    {
+        if(x_second-x_first>0){
+            var t1=x_second-x_first;
+        }
+        else{
+            var t1=x_first-x_second;
+        }
+        if(y_second-y_first>0){
+            var t2=y_second-y_first;
+        }
+        else{
+            var t2=y_first-y_second;
+        }
+        if(t1>=t2){
+            var length=t1;
+        }
+        else{
+            var length=t2;
+        }
+        var dx=(x_second-x_first)/length;
+        var dy=(y_second-y_first)/length;
+        if(x_second-x_first>0){
+            t1=1;
+        }
+        if(x_second-x_first<0){
+            t1=-1;
+        }
+        if(x_second-x_first==0){
+            t1=0;
+        }
+        if(y_second-y_first>0){
+            t2=1;
+        }
+        if(y_second-y_first<0){
+            t2=-1;
+        }
+        if(y_second-y_first==0){
+            t2=0;
+        }
+        var x=x_first+0.5*t1;
+        var y=y_first+0.5*t2;
+        var i=1;
+        while(i<=length){
+            context.fillRect(x,y,1,1);
+            x=x+dx;
+            y=y+dy;
+            i=i+1;
+        }
+    } 
+
+    function drawCircle(x, y, radius) 
+    {
+        context.beginPath();  
+        context.arc(x, y, radius, 0, Math.PI*2, false);  
+        context.closePath();  
+        context.fill();  
+    }
+ 
+            
+    function clearCanvas(){
+        context.clearRect(0,0,canvas.width,canvas.height);
+    }
+            
+            
+        </script>
+    </body>
+</html>

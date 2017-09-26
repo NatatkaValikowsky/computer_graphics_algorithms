@@ -1,0 +1,90 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <style>
+           body {
+                background: white;
+            }
+            .toolbar {
+                float: left;
+                font-family: 'Trebuchet MS'; 
+                font-size: 14px;
+                font-variant: small-caps;
+                text-align: center;
+                background: #F2F7FE;
+                padding: 10px 15px 3px 10px;
+                margin-bottom: 1px;
+                margin-right: 1px;
+                border: 1px solid #7B899B;
+            }
+            canvas {
+                border: 1px solid #7B899B;
+                }
+            h1{
+                 text-align: center;
+             }
+        </style>
+    </head>
+    <body>
+        <h1>Алгоритм заливки 4-х связным алгоритмом с затравкой</h1>
+        <div class="toolbar">
+            <img src="001.png" width="200" onclick="algorythm()"/><br>
+            <img src="002.png" width="200" onclick="clearlist()"/>
+        </div>
+        <canvas width="800" height="500" id="canvas"></canvas>
+        
+        <script>
+            var canvas=document.getElementById('canvas');
+            var context=canvas.getContext('2d');
+            clearlist();
+            
+            function clearlist(){
+                context.strokeStyle="black";
+                context.lineWidth = 5;
+                var grd=context.createLinearGradient(0,0,canvas.width,canvas.height);
+                grd.addColorStop(0, "#abe5d9");
+                grd.addColorStop(0.5, "#f5f36b");
+                grd.addColorStop(1, "#f7bfbb");
+                // Fill with gradient
+                context.fillStyle=grd;
+                context.fillRect(0,0,canvas.width,canvas.height);
+                context.beginPath();  
+                context.arc(400, 250, 150, 0, Math.PI*2);  
+                context.closePath();  
+                context.stroke();
+            }
+            
+            function algorythm(){
+                var pixelSet=context.getImageData(0,0,canvas.width,canvas.height);
+                fillBackground(pixelSet);
+                context.putImageData(pixelSet,0,0);
+            }
+            
+function fillBackground(mass) {
+  // перебор всех строк
+  for (var j = 0; j < canvas.height; ++j) {
+    // перебор пикселей в строке слева направо
+    for (var i = 0; i < canvas.width; ++i) {
+      var ind = 4 * (i + j * canvas.width);
+      if (mass.data[ind] < 30 && mass.data[ind + 1] < 30 && mass.data[ind + 2] < 30) {
+        break;
+      }
+      mass.data[ind] = 255;
+      mass.data[ind + 1] = 255;
+      mass.data[ind + 2] = 255;      
+    }
+    // перебор пикселей в строке справа налево
+    for (var i2 = canvas.width - 1; i2 > i; --i2) {
+      var ind = 4 * (i2 + j * canvas.width);
+      if (mass.data[ind] < 30 && mass.data[ind + 1] < 30 && mass.data[ind + 2] < 30) {
+        break;
+      }
+      mass.data[ind] = 255;
+      mass.data[ind + 1] = 255;
+      mass.data[ind + 2] = 255;      
+    }
+  }
+}
+        </script>
+    </body>
+</html>
